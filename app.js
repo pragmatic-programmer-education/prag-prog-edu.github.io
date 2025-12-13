@@ -11,7 +11,10 @@
     // 4. Настройка сворачиваемых групп курсов
     setupGroupCollapsibles();
 
-    // 5. ОТЛАДКА
+    // 5. Сделать карточки курсоv кликабельными
+    setupCourseCardLinks();
+
+    // 6. ОТЛАДКА
     logDebugInfo();
 });
 
@@ -145,6 +148,64 @@ function setupGroupCollapsibles() {
                 e.preventDefault();
                 toggle.click();
             }
+        });
+    });
+}
+
+/**
+ * Сделать всю карточку курсa кликабельной: при клике на карточку происходит переход
+ * на URL из пустой вложенной ссылки с классом `course-card-link`.
+ * Внутренние ссылки в `.course-links` не будут инициировать переход карточки.
+ */
+function setupCourseCardLinks() {
+    const cards = document.querySelectorAll('.course-card');
+
+    cards.forEach(card => {
+        // Support both legacy empty anchor inside card OR data attributes on the card
+        const innerLink = card.querySelector('.course-card-link');
+        const href = card.dataset.href || (innerLink && innerLink.getAttribute('href')) || null;
+        const target = card.dataset.target || (innerLink && innerLink.getAttribute('target')) || '_self';
+
+        if (!href) return; // nothing to do if no url available
+
+        // Accessibility: make card focusable and announce as link
+        card.setAttribute('role', 'link');
+        card.setAttribute('tabindex', '0');
+        card.style.cursor = 'pointer';
+
+        // Click on card -> navigate, unless user clicked a nested actionable element
+        card.addEventListener('click', (e) => {
+            // If clicked an inner link (info/discount) or button, don't navigate the card
+            if (e.target.closest('.course-links') || e.target.closest('a.course-link') || e.target.closest('button')) return;
+
+            if (href === '#') {
+                // No meaningful URL configured — do nothing
+                return;
+            }
+
+            // Use window.open to respect target (_blank etc.)
+            try {
+                window.open(href, target);
+            } catch (err) {
+                // Fallback to location change
+                if (target === '_self') window.location.href = href;
+            }
+        });
+
+        // Keyboard support: Enter / Space
+        card.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                card.click();
+            }
+        });
+    });
+
+    // Ensure clicks on the small action links don't bubble to the card
+    document.querySelectorAll('.course-links .course-link').forEach(a => {
+        a.addEventListener('click', (e) => {
+            e.stopPropagation();
+            // allow normal anchor behavior to continue
         });
     });
 }
