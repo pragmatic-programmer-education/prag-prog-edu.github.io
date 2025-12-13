@@ -1,0 +1,346 @@
+﻿/* УПРОЩЕННЫЕ СТИЛИ БЕЗ ПЕРЕМЕННЫХ TELEGRAM */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+body {
+    background: #ffffff !important; /* ЯВНО БЕЛЫЙ */
+    color: #000000 !important; /* ЯВНО ЧЁРНЫЙ */
+    min-height: 100vh;
+    padding-bottom: 20px;
+}
+
+/* ЯВНО ЗАДАЁМ ЦВЕТА ВСЕМ ТЕКСТОВЫМ ЭЛЕМЕНТАМ */
+h1, h2, h3, h4, h5, h6, p, span, div, a, button, .tab, .logo-title, .logo-subtitle, .course-title, .contact-text {
+    color: #000000 !important;
+}
+
+/* Исключения для цветных кнопок и ссылок */
+.main-button, .course-link, .contact-icon {
+    color: #ffffff !important;
+}
+
+.container {
+    max-width: 100%;
+    padding: 0 8px;
+}
+
+/* ВКЛАДКИ */
+.tabs {
+    display: flex;
+    background: #f8f9fa;
+    border-radius: 12px;
+    margin: 12px 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+}
+
+.tab {
+    flex: 1;
+    padding: 14px 4px;
+    text-align: center;
+    border: none;
+    background: none;
+    color: #000000 !important;
+    font-weight: 600;
+    font-size: 13px;
+    cursor: pointer;
+}
+
+    .tab.active {
+        color: #3390ec !important;
+        position: relative;
+    }
+
+        .tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 15%;
+            right: 15%;
+            height: 3px;
+            background: #3390ec;
+        }
+
+/* КОНТЕНТ ВКЛАДОК */
+.tab-content {
+    display: none;
+    padding: 0 5px;
+}
+
+    .tab-content.active {
+        display: block;
+    }
+
+/* ГЛАВНАЯ */
+.logo-section {
+    text-align: center;
+    margin: 15px 0;
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 16px;
+}
+
+.logo-placeholder {
+    width: 100px;
+    height: 100px;
+    margin: 0 auto 12px;
+    background: linear-gradient(135deg, #3390ec, #6c5ce7);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 36px;
+    color: white;
+}
+
+.logo-title {
+    font-size: 22px;
+    font-weight: 700;
+    margin-bottom: 4px;
+    color: #000000 !important;
+}
+
+.logo-subtitle {
+    color: #666666 !important;
+    font-size: 13px;
+}
+
+.main-button {
+    display: block;
+    width: 100%;
+    padding: 16px;
+    margin: 12px 0;
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    text-align: center;
+}
+
+    .main-button.green {
+        background: linear-gradient(135deg, #4CAF50, #2E7D32) !important;
+        box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3) !important;
+    }
+
+    .main-button.blue {
+        background: linear-gradient(135deg, #3390ec, #1a73e8) !important;
+        box-shadow: 0 4px 12px rgba(51, 144, 236, 0.3) !important;
+    }
+
+    .main-button.orange {
+        background: linear-gradient(135deg, #FF5722, #D84315) !important;
+        box-shadow: 0 4px 12px rgba(255, 87, 34, 0.3) !important;
+    }
+
+.button-icon {
+    margin-right: 8px;
+}
+
+/* КУРСЫ - КЛЮЧЕВОЕ ИСПРАВЛЕНИЕ СЕТКИ */
+.courses-grid {
+    display: grid;
+    /* 2 КОЛОНКИ ДАЖЕ НА УЗКИХ ЭКРАНАХ */
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    margin: 15px 0;
+}
+
+.course-card {
+    background: #f8f9fa;
+    border-radius: 10px;
+    padding: 10px;
+    text-align: center;
+    min-width: 0; /* КРИТИЧЕСКИ ВАЖНО */
+    max-width: 100%;
+    overflow: hidden;
+}
+
+.course-logo {
+    width: 45px;
+    height: 45px;
+    margin: 0 auto 8px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    color: white;
+}
+
+    .course-logo.python {
+        background: #3776AB;
+    }
+
+    .course-logo.js {
+        background: #F7DF1E;
+    }
+
+    .course-logo.web {
+        background: #61DAFB;
+    }
+
+    .course-logo.java {
+        background: #007396;
+    }
+
+    .course-logo.mobile {
+        background: #34A853;
+    }
+
+    .course-logo.algo {
+        background: #9C27B0;
+    }
+
+.course-title {
+    font-weight: 600;
+    font-size: 12px;
+    line-height: 1.3;
+    height: 32px;
+    overflow: hidden;
+    margin-bottom: 8px;
+    color: #000000 !important;
+}
+
+.course-links {
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+}
+
+.course-link {
+    padding: 5px 8px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 500;
+    text-decoration: none;
+    white-space: nowrap;
+}
+
+    .course-link.info {
+        background: #3390ec;
+        color: white !important;
+    }
+
+    .course-link.discount {
+        background: #FF5722;
+        color: white !important;
+    }
+
+/* КОНТАКТЫ */
+.contact-list {
+    margin: 15px 0;
+}
+
+.contact-item {
+    display: flex;
+    align-items: center;
+    padding: 14px;
+    background: #f8f9fa;
+    border-radius: 10px;
+    margin-bottom: 10px;
+    text-decoration: none;
+}
+
+.contact-icon {
+    width: 34px;
+    height: 34px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 15px;
+    margin-right: 12px;
+    color: white;
+}
+
+    .contact-icon.youtube {
+        background: #FF0000;
+    }
+
+    .contact-icon.vk {
+        background: #4C75A3;
+    }
+
+    .contact-icon.dzen {
+        background: #333333;
+    }
+
+    .contact-icon.rutube {
+        background: #000000;
+    }
+
+    .contact-icon.stepik {
+        background: #4CAF50;
+    }
+
+.contact-text {
+    font-weight: 500;
+    font-size: 14px;
+    color: #000000 !important;
+}
+
+/* ТОЛЬКО ДЛЯ ОЧЕНЬ УЗКИХ ЭКРАНОВ (<320px) */
+@media (max-width: 320px) {
+    .courses-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .tab {
+        font-size: 12px;
+        padding: 12px 2px;
+    }
+}
+
+
+/* Яркий стиль для неактивной кнопки */
+.main-button.disabled {
+    background: linear-gradient(135deg, #9e9e9e, #757575) !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+    cursor: not-allowed !important;
+    opacity: 0.8;
+    position: relative;
+    pointer-events: none;
+}
+
+    /* Добавляем надпись "Скоро" */
+    .main-button.disabled::after {
+        content: 'СКОРО';
+        position: absolute;
+        top: -8px;
+        right: -8px;
+        background: #ff9800;
+        color: white;
+        font-size: 10px;
+        font-weight: bold;
+        padding: 3px 8px;
+        border-radius: 10px;
+        animation: pulse 2s infinite;
+    }
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.05);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+/* Иконка часов вместо награды */
+.main-button.disabled .button-icon::before {
+    content: '\f017'; /* Иконка часов */
+    font-family: 'Font Awesome 6 Free';
+    font-weight: 900;
+}

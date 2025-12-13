@@ -1,0 +1,142 @@
+﻿<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pragmatic Programmer</title>
+
+    <!-- Подключение Telegram WebApp SDK -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+
+    <!-- Подключение FontAwesome для иконок -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Подключение CSS стилей -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <!-- ВКЛАДКИ -->
+        <div class="tabs">
+            <button class="tab active" data-tab="home">
+                <i class="fas fa-home"></i> Главная
+            </button>
+            <button class="tab" data-tab="courses">
+                <i class="fas fa-graduation-cap"></i> Курсы
+            </button>
+            <button class="tab" data-tab="contacts">
+                <i class="fas fa-phone-alt"></i> На связи
+            </button>
+        </div>
+
+        <!-- ГЛАВНАЯ -->
+        <div id="home" class="tab-content active">
+            <div class="logo-section">
+                <div class="logo-placeholder">
+                    <i class="fas fa-code"></i>
+                </div>
+                <h1 class="logo-title">Pragmatic Programmer</h1>
+                <p class="logo-subtitle">Практические навыки для разработчиков</p>
+            </div>
+
+            <!-- КНОПКА 2: Список курсов -->
+            <a href="#" class="main-button green" id="courses-btn">
+                <i class="fas fa-list button-icon"></i> Список курсов
+            </a>
+
+            <!-- КНОПКА 1: Получить сертификат -->
+            <a href="https://t.me/your_certificate_bot" class="main-button blue disabled" id="certificate-btn">
+                <i class="fas fa-award button-icon"></i> Получить сертификат
+            </a>
+
+            <!-- КНОПКА 3: YouTube канал -->
+            <a href="https://youtube.com/your-channel" class="main-button orange" target="_blank">
+                <i class="fab fa-youtube button-icon"></i> Наш YouTube канал
+            </a>
+        </div>
+
+        <!-- КУРСЫ -->
+        <div id="courses" class="tab-content">
+            <div class="courses-grid">
+                <div class="course-card">
+                    <div class="course-logo python"><i class="fab fa-python"></i></div>
+                    <div class="course-title">Python с нуля</div>
+                    <div class="course-links">
+                        <a href="#" class="course-link info">Инфо</a>
+                        <a href="#" class="course-link discount">Скидка</a>
+                    </div>
+                </div>
+                <div class="course-card">
+                    <div class="course-logo js"><i class="fab fa-js"></i></div>
+                    <div class="course-title">JavaScript Pro</div>
+                    <div class="course-links">
+                        <a href="#" class="course-link info">Инфо</a>
+                        <a href="#" class="course-link discount">Скидка</a>
+                    </div>
+                </div>
+                <div class="course-card">
+                    <div class="course-logo web"><i class="fas fa-code"></i></div>
+                    <div class="course-title">Веб-разработка</div>
+                    <div class="course-links">
+                        <a href="#" class="course-link info">Инфо</a>
+                        <a href="#" class="course-link discount">Скидка</a>
+                    </div>
+                </div>
+                <div class="course-card">
+                    <div class="course-logo java"><i class="fab fa-java"></i></div>
+                    <div class="course-title">Java для начинающих</div>
+                    <div class="course-links">
+                        <a href="#" class="course-link info">Инфо</a>
+                        <a href="#" class="course-link discount">Скидка</a>
+                    </div>
+                </div>
+                <div class="course-card">
+                    <div class="course-logo mobile"><i class="fas fa-mobile-alt"></i></div>
+                    <div class="course-title">Мобильная разработка</div>
+                    <div class="course-links">
+                        <a href="#" class="course-link info">Инфо</a>
+                        <a href="#" class="course-link discount">Скидка</a>
+                    </div>
+                </div>
+                <div class="course-card">
+                    <div class="course-logo algo"><i class="fas fa-brain"></i></div>
+                    <div class="course-title">Алгоритмы и структуры данных</div>
+                    <div class="course-links">
+                        <a href="#" class="course-link info">Инфо</a>
+                        <a href="#" class="course-link discount">Скидка</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- КОНТАКТЫ -->
+        <div id="contacts" class="tab-content">
+            <div class="contact-list">
+                <a href="https://youtube.com/your-channel" class="contact-item" target="_blank">
+                    <div class="contact-icon youtube"><i class="fab fa-youtube"></i></div>
+                    <div class="contact-text">YouTube</div>
+                </a>
+                <a href="https://vk.com/your-page" class="contact-item" target="_blank">
+                    <div class="contact-icon vk"><i class="fab fa-vk"></i></div>
+                    <div class="contact-text">VK</div>
+                </a>
+                <a href="https://dzen.ru/your-channel" class="contact-item" target="_blank">
+                    <div class="contact-icon dzen"><i class="fas fa-newspaper"></i></div>
+                    <div class="contact-text">Дзен</div>
+                </a>
+                <a href="https://rutube.ru/your-channel" class="contact-item" target="_blank">
+                    <div class="contact-icon rutube"><i class="fas fa-play-circle"></i></div>
+                    <div class="contact-text">RuTube</div>
+                </a>
+                <a href="https://stepik.org/users/your-profile" class="contact-item" target="_blank">
+                    <div class="contact-icon stepik"><i class="fas fa-graduation-cap"></i></div>
+                    <div class="contact-text">Stepik</div>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Подключение JavaScript -->
+    <script src="app.js"></script>
+</body>
+</html>
