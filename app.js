@@ -8,7 +8,10 @@
     // 3. НАСТРОЙКА СПЕЦИАЛЬНЫХ КНОПОК
     setupSpecialButtons();
 
-    // 4. ОТЛАДКА
+    // 4. Настройка сворачиваемых групп курсов
+    setupGroupCollapsibles();
+
+    // 5. ОТЛАДКА
     logDebugInfo();
 });
 
@@ -102,6 +105,48 @@ function setupSpecialButtons() {
             triggerHapticFeedback('medium');
         });
     }
+}
+
+/**
+ * Настройка сворачиваемых секций групп курсов
+ * - первая группа остаётся развернутой
+ * - остальные по умолчанию свернуты (в HTML уже отмечены классом collapsed)
+ */
+function setupGroupCollapsibles() {
+    const groups = document.querySelectorAll('.course-group');
+
+    groups.forEach(group => {
+        const toggle = group.querySelector('.group-toggle');
+        if (!toggle) return;
+
+        // Ensure correct aria-expanded initial state from class
+        const isCollapsed = group.classList.contains('collapsed');
+        toggle.setAttribute('aria-expanded', String(!isCollapsed));
+
+        // Click handler
+        toggle.addEventListener('click', (e) => {
+            e.preventDefault();
+            const currentlyCollapsed = group.classList.contains('collapsed');
+
+            if (currentlyCollapsed) {
+                group.classList.remove('collapsed');
+                toggle.setAttribute('aria-expanded', 'true');
+            } else {
+                group.classList.add('collapsed');
+                toggle.setAttribute('aria-expanded', 'false');
+            }
+
+            triggerHapticFeedback('light');
+        });
+
+        // Allow keyboard accessibility (Enter / Space)
+        toggle.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                toggle.click();
+            }
+        });
+    });
 }
 
 /**
