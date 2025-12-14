@@ -17,6 +17,9 @@
     // 5. Сделать карточки курсоv кликабельными
     setupCourseCardLinks();
 
+    // 5.1 Добавить анимацию hover/leave для кнопок действий в карточках
+    setupCourseLinkHoverAnimations();
+
     // 6. ОТЛАДКА
     logDebugInfo();
 });
@@ -327,4 +330,40 @@ function addUtmToAllLinks(utmParam) {
     } catch (e) {
         console.warn('UTM: failed to append UTM to links', e);
     }
+}
+
+function setupCourseLinkHoverAnimations() {
+    const links = document.querySelectorAll('.course-link');
+    links.forEach(link => {
+        // Mouse enter / leave
+        link.addEventListener('mouseenter', () => {
+            link.classList.add('is-hovered');
+            link.classList.remove('is-leaving');
+        });
+        link.addEventListener('mouseleave', () => {
+            link.classList.remove('is-hovered');
+            link.classList.add('is-leaving');
+            // remove leaving state after transition completes
+            setTimeout(() => link.classList.remove('is-leaving'), 260);
+        });
+
+        // Keyboard accessibility: focus / blur
+        link.addEventListener('focus', () => {
+            link.classList.add('is-hovered');
+            link.classList.remove('is-leaving');
+        });
+        link.addEventListener('blur', () => {
+            link.classList.remove('is-hovered');
+            link.classList.add('is-leaving');
+            setTimeout(() => link.classList.remove('is-leaving'), 260);
+        });
+
+        // Touch devices: simulate quick hover on touchstart
+        link.addEventListener('touchstart', () => {
+            link.classList.add('is-hovered');
+        }, { passive: true });
+        link.addEventListener('touchend', () => {
+            link.classList.remove('is-hovered');
+        }, { passive: true });
+    });
 }

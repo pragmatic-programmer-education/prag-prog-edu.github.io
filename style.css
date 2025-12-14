@@ -164,7 +164,7 @@ h1, h2, h3, h4, h5, h6, p, span, div, a, button, .tab, .logo-title, .logo-subtit
     overflow: hidden;
 }
 
-/* Заголовок группы как кнопка */
+/* Заголовок_GROUP как кнопка */
 .group-toggle {
     width: 100%;
     display: flex;
@@ -211,11 +211,6 @@ h1, h2, h3, h4, h5, h6, p, span, div, a, button, .tab, .logo-title, .logo-subtit
     grid-template-columns: repeat(2, 1fr);
     gap: 10px;
     margin: 15px 0;
-}
-
-.course-item {
-    display: flex;
-    flex-direction: column;
 }
 
 .course-card {
@@ -333,48 +328,64 @@ h1, h2, h3, h4, h5, h6, p, span, div, a, button, .tab, .logo-title, .logo-subtit
 
 .course-links {
     display: flex;
-    /* changed to vertical stacking so discount goes under the info button */
-    flex-direction: column;
     justify-content: center;
-    align-items: stretch; /* make children able to expand to full width */
-    gap: 8px;
+    gap: 12px; /* increased space between action buttons for better touch targets */
 }
 
 .course-link {
-    padding: 6px 10px;
-    border-radius: 8px;
-    font-size: 12px;
-    font-weight: 600;
+    /* Slightly larger, more tappable buttons with smooth hover/leave animations */
+    padding: 8px 14px;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 700;
     text-decoration: none;
     white-space: nowrap;
     z-index: 3; /* ensure buttons are clickable above overlay */
-    display: inline-block;
-    text-align: center;
-    box-sizing: border-box;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: transform 180ms cubic-bezier(.2,.9,.2,1),
+                box-shadow 180ms cubic-bezier(.2,.9,.2,1),
+                opacity 160ms ease,
+                background-color 160ms ease;
 }
 
-    .course-link.info {
-        background: #3390ec;
-        color: white !important;
-        /* keep info button compact and centered */
-        width: auto;
-        align-self: center;
-        white-space: nowrap;
-    }
+/* Hover / focus animation for course action buttons */
+.course-link.is-hovered,
+.course-link:hover,
+.course-link:focus {
+    transform: translateY(-4px) scale(1.04);
+    box-shadow: 0 10px 18px rgba(15,23,42,0.12);
+    opacity: 1;
+}
 
-    .course-link.discount {
-        background: #FF5722;
-        color: white !important;
-        /* make discount button span the full width of the card */
-        width: 100%;
-        display: block;
-        padding: 10px 12px;
-        border-radius: 12px;
-        font-weight: 700;
-    }
+.course-link.is-leaving {
+    transform: translateY(0) scale(1);
+    transition: transform 240ms cubic-bezier(.22,.9,.2,1), box-shadow 200ms ease;
+    box-shadow: none;
+}
 
-.course-discount {
-    margin-top: 8px;
+.course-link:active {
+    transform: translateY(-1px) scale(0.995);
+    box-shadow: 0 6px 10px rgba(15,23,42,0.10);
+}
+
+/* Visible focus ring for keyboard users */
+.course-link:focus-visible {
+    outline: 3px solid rgba(51,144,236,0.18);
+    outline-offset: 3px;
+}
+
+/* Ensure action buttons keep their intended colored backgrounds */
+.course-links .course-link.info {
+    background: linear-gradient(135deg,#3390ec,#1a73e8) !important;
+    color: #ffffff !important;
+}
+
+.course-links .course-link.discount {
+    background: linear-gradient(135deg,#FF5722,#D84315) !important;
+    color: #ffffff !important;
 }
 
 /* КОНТАКТЫ */
