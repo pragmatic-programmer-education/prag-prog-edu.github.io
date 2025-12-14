@@ -97,6 +97,20 @@ h1, h2, h3, h4, h5, h6, p, span, div, a, button, .tab, .logo-title, .logo-subtit
     color: white;
 }
 
+/* Author logo sizing: make the image fit the placeholder and look like a normal author logo */
+.logo-placeholder .author_logo,
+.author_logo {
+    /* size the logo slightly smaller than the placeholder so it has padding */
+    max-width: 150px;
+    max-height: 150px;
+    width: auto;
+    height: auto;
+    display: block;
+    object-fit: contain; /* preserve aspect ratio */
+    /* center visually if it doesn't fill the full circle */
+    margin: 0 auto;
+}
+
 .logo-title {
     font-size: 22px;
     font-weight: 700;
@@ -211,6 +225,16 @@ h1, h2, h3, h4, h5, h6, p, span, div, a, button, .tab, .logo-title, .logo-subtit
     transition: transform 200ms ease, box-shadow 200ms ease, border-color 200ms ease;
     border: 1px solid transparent;
     box-shadow: 0 6px 18px rgba(15, 23, 42, 0.06);
+    display: flex;               /* make card a flex container */
+    flex-direction: column;      /* stack children vertically */
+    justify-content: flex-start; /* default - top aligned */
+    align-items: center;         /* center horizontally */
+    min-height: 140px;          /* ensure consistent card height */
+}
+
+/* Center content vertically for upcoming teaser cards */
+.course-card.upcoming {
+    justify-content: center;
 }
 
 /* Overlay link covers whole card so the card acts as one large link */
@@ -235,49 +259,44 @@ h1, h2, h3, h4, h5, h6, p, span, div, a, button, .tab, .logo-title, .logo-subtit
 }
 
 .course-logo {
-    width: 56px;
-    height: 56px;
-    margin: 0 auto 10px;
+    width: 72px;
+    height: 72px;
+    margin: 0 auto 12px;
     border-radius: 12px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 20px;
+    font-size: 24px;
     color: white;
     box-shadow: 0 6px 14px rgba(0,0,0,0.06);
     transition: transform 200ms ease, box-shadow 200ms ease;
+    overflow: hidden; /* ensure images don't overflow */
+    background: transparent; /* neutral default */
 }
 
-.course-card:hover .course-logo {
-    transform: translateY(-4px) scale(1.05);
-    box-shadow: 0 18px 40px rgba(0,0,0,0.12);
+.course-logo img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
 }
 
-    .course-logo.python {
-        background: #3776AB;
+/* Slightly smaller logos on narrow screens to avoid overflowing cards */
+@media (max-width: 480px) {
+    .course-logo {
+        width: 64px;
+        height: 64px;
+        font-size: 20px;
     }
+}
 
-    .course-logo.js {
-        background: #F7DF1E;
-        color: #000;
-    }
-
-    .course-logo.web {
-        background: #61DAFB;
-        color: #000;
-    }
-
-    .course-logo.java {
-        background: #007396;
-    }
-
-    .course-logo.mobile {
-        background: #34A853;
-    }
-
-    .course-logo.algo {
-        background: #9C27B0;
-    }
+/* Keep per-class background colors optional — they will show behind semi-transparent images */
+.course-logo.python { background: #3776AB; }
+.course-logo.js { background: #F7DF1E; color: #000; }
+.course-logo.web { background: #61DAFB; color: #000; }
+.course-logo.java { background: #007396; }
+.course-logo.mobile { background: #34A853; }
+.course-logo.algo { background: #9C27B0; }
 
 .course-title {
     font-weight: 700;
@@ -377,12 +396,22 @@ h1, h2, h3, h4, h5, h6, p, span, div, a, button, .tab, .logo-title, .logo-subtit
     box-shadow: inset 0 -1px 0 rgba(0,0,0,0.08);
 }
 
+/* Ensure images inside contact icons are properly sized and centered */
+.contact-icon img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+    padding: 4px; /* inner padding so image doesn't touch rounded corners */
+}
+
 /* Platform-specific backgrounds for the icon square */
 .contact-icon.youtube { background: #FF0000; }
 .contact-icon.vk { background: #4C75A3; }
 .contact-icon.dzen { background: #333333; }
 .contact-icon.rutube { background: #000000; }
 .contact-icon.stepik { background: #4CAF50; }
+.contact-icon.udemy { background: #a435f0; }
 
 /* Platform-specific border colors (matches .contact-icon backgrounds) */
 .contact-item.youtube { border-color: #FF0000; }
@@ -390,6 +419,7 @@ h1, h2, h3, h4, h5, h6, p, span, div, a, button, .tab, .logo-title, .logo-subtit
 .contact-item.dzen { border-color: #333333; }
 .contact-item.rutube { border-color: #000000; }
 .contact-item.stepik { border-color: #4CAF50; }
+.contact-item.udemy { border-color: #a435f0; }
 
 /* Hover / focus states to improve affordance */
 .contact-item:hover,
