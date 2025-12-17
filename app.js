@@ -19,6 +19,9 @@ document.addEventListener('DOMContentLoaded', function () {
     // Apply UTM tag to all links and data-href before other initialization
     addUtmToAllLinks('utm_source=pp_tma');
 
+    // mark free courses
+    markFreeCourses();
+
     // 1. ИНИЦИАЛИЗАЦИЯ TELEGRAM
     initializeTelegramWebApp();
 
@@ -485,4 +488,22 @@ function switchToTab(tabId) {
 
     console.error(`❌ Вкладка "${tabId}" не найдена`);
     return false;
+}
+
+/**
+ * Пометить карточки как бесплатные если в области .course-links есть ссылка с текстом "Записаться"
+ */
+function markFreeCourses() {
+    try {
+        const cards = document.querySelectorAll('.course-card');
+        cards.forEach(card => {
+            const links = Array.from(card.querySelectorAll('.course-links a'));
+            const hasEnroll = links.some(a => /записать|записаться|записан/i.test(a.textContent.trim()));
+            if (hasEnroll) {
+                card.classList.add('free');
+            }
+        });
+    } catch (e) {
+        console.warn('markFreeCourses failed', e);
+    }
 }
