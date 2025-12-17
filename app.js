@@ -435,6 +435,8 @@ function setupCourseLinkHoverAnimations() {
  * Инициализация и синхронизация Telegram MainButton (опционально)
  */
 function setupMainButton() {
+    return; // не показываем MainButton пока что
+
     if (!(window.Telegram && Telegram.WebApp && Telegram.WebApp.MainButton)) return;
 
     try {
