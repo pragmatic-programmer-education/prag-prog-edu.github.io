@@ -28,11 +28,8 @@ document.addEventListener('DOMContentLoaded', function () {
     // 1.1 Скрыть alert, если пользователь уже закрыл его в этой сессии (опционально)
     restoreStepikAlertState();
 
-    // 2. НАСТРОЙКА ПЕРЕКЛЮЧЕНИЯ ВКЛАДОК
-    setupTabSwitching();
-
-    // Enable swipe navigation between tabs
-    setupSwipeNavigation();
+    // 2. НАСТРОЙКА ПЕРЕКЛЮЧЕНИЯ ВКЛАДОК (включая свайпы)
+    setupTabSwitching(); // ВАЖНО: эта функция теперь включает и свайпы!
 
     // 3. НАСТРОЙКА СПЕЦИАЛЬНЫХ КНОПОК
     setupSpecialButtons();
@@ -92,7 +89,7 @@ function initializeTelegramWebApp() {
             Telegram.WebApp.ready();
 
             // Try to expand but ignore if not allowed
-            try { Telegram.WebApp.expand(); } catch (_) {}
+            try { Telegram.WebApp.expand(); } catch (_) { }
 
             console.log('✅ TMA инициализирована. Тема:', Telegram.WebApp.themeParams);
 
@@ -138,32 +135,24 @@ function applyTelegramTheme() {
 }
 
 /**
- * Настройка переключения вкладок (всё как было, но фокус на доступность)
+ * Настройка переключения вкладок (клики + свайпы)
+ * Объединённая версия с поддержкой обоих способов навигации
  */
 function setupTabSwitching() {
     const tabs = document.querySelectorAll('.tab');
-    const tabContents = document.querySelectorAll('.tab-content');
 
+    // 1. Обработка кликов по вкладкам (как было раньше)
     tabs.forEach(tab => {
         tab.addEventListener('click', () => {
             const tabId = tab.getAttribute('data-tab');
-
-            tabs.forEach(t => t.classList.remove('active'));
-            tabContents.forEach(content => content.classList.remove('active'));
-
-            tab.classList.add('active');
-            const contentEl = document.getElementById(tabId);
-            if (contentEl) {
-                contentEl.classList.add('active');
-                // Move focus to first focusable element in content for screen-readers
-                const focusable = contentEl.querySelector('a, button, [tabindex]:not([tabindex="-1"])');
-                if (focusable) focusable.focus();
-            }
-
-            triggerHapticFeedback('light');
-            console.log('🔘 Переключено на вкладку:', tabId);
+            switchToTab(tabId, 'click');
         });
     });
+
+    // 2. Инициализация свайпов (упрощённая версия без конфликтов)
+    setupSwipeNavigation();
+
+    console.log('✅ Навигация по вкладкам настроена (клики + свайпы)');
 }
 
 /**
@@ -174,7 +163,7 @@ function setupSpecialButtons() {
     if (coursesBtn) {
         coursesBtn.addEventListener('click', function (e) {
             e.preventDefault();
-            switchToTab('courses');
+            switchToTab('courses', 'click');
             triggerHapticFeedback('medium');
         });
     }
@@ -468,55 +457,209 @@ function setupMainButton() {
     }
 }
 
-// Restore programmatic tab switch used by special buttons
-function switchToTab(tabId) {
+/**
+ * Переключение на конкретную вкладку с анимацией
+ * @param {string} tabId - ID вкладки ('home', 'courses', 'contacts')
+ * @param {string} source - Источник переключения: 'click' или 'swipe'
+ */
+function switchToTab(tabId, source = 'click') {
     const tab = document.querySelector(`[data-tab="${tabId}"]`);
     const content = document.getElementById(tabId);
 
-    if (tab && content) {
-        // remove active from all
-        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-
-        // activate requested
-        tab.classList.add('active');
-        content.classList.add('active');
-
-        // accessibility: move focus to first focusable element in content
-        const focusable = content.querySelector('a, button, [tabindex]:not([tabindex="-1"])');
-        if (focusable) focusable.focus();
-
-        triggerHapticFeedback('light');
-        console.log(`✅ Переключено на вкладку "${tabId}" программно`);
-        return true;
+    if (!tab || !content) {
+        console.error(`❌ Вкладка "${tabId}" не найдена`);
+        return false;
     }
 
-    console.error(`❌ Вкладка "${tabId}" не найдена`);
-    return false;
+    // Получаем текущую активную вкладку
+    const currentTab = document.querySelector('.tab.active');
+    const currentContent = document.querySelector('.tab-content.active');
+
+    if (currentTab === tab && currentContent === content) {
+        return true; // уже на этой вкладке
+    }
+
+    // Определяем направление анимации для свайпа
+    const tabsArray = Array.from(document.querySelectorAll('.tab'));
+    const currentIndex = tabsArray.indexOf(currentTab);
+    const newIndex = tabsArray.indexOf(tab);
+    const direction = newIndex > currentIndex ? 'right' : 'left';
+
+    // Убираем активность со всех вкладок
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(c => {
+        c.classList.remove('active');
+        c.classList.remove('swipe-in-left', 'swipe-in-right', 'swipe-out-left', 'swipe-out-right');
+        if (c !== content && source === 'swipe') {
+            c.style.display = 'none';
+        }
+    });
+
+    // Анимация только для свайпов
+    if (source === 'swipe' && currentContent) {
+        currentContent.classList.add(`swipe-out-${direction}`);
+        content.classList.add(`swipe-in-${direction}`);
+
+        // Удаляем классы анимации после завершения
+        setTimeout(() => {
+            currentContent.classList.remove(`swipe-out-${direction}`);
+            content.classList.remove(`swipe-in-${direction}`);
+        }, 300);
+    }
+
+    // Активируем новую вкладку
+    tab.classList.add('active');
+    content.classList.add('active');
+    content.style.display = 'block';
+
+    // Скрываем старый контент после анимации
+    if (currentContent) {
+        if (source === 'swipe') {
+            setTimeout(() => {
+                currentContent.style.display = 'none';
+            }, 300);
+        } else {
+            currentContent.style.display = 'none';
+        }
+    }
+
+    // Тактильная отдача
+    triggerHapticFeedback('light');
+
+    // Фокус для доступности
+    const focusable = content.querySelector('a, button, [tabindex]:not([tabindex="-1"])');
+    if (focusable) focusable.focus();
+
+    console.log(`✅ Переключено на вкладку "${tabId}" (${source})`);
+    return true;
 }
 
 /**
- * Switch to adjacent tab: 'next' or 'prev'. Respects tab order in DOM.
+ * Настройка свайп-навигации (упрощённая, без конфликтов с кликами)
  */
-function switchToAdjacentTab(direction) {
-    const tabs = Array.from(document.querySelectorAll('.tab'));
-    if (!tabs || tabs.length === 0) return;
+function setupSwipeNavigation() {
+    const container = document.querySelector('.container') || document.body;
+    if (!container) return;
 
-    const active = document.querySelector('.tab.active');
-    let idx = active ? tabs.indexOf(active) : 0;
-    if (idx === -1) idx = 0;
+    const SWIPE_THRESHOLD = 60; // минимальное расстояние свайпа
+    const VERTICAL_LOCK = 40;   // максимальное вертикальное смещение
 
-    let newIdx = idx;
-    if (direction === 'next') newIdx = Math.min(tabs.length - 1, idx + 1);
-    if (direction === 'prev') newIdx = Math.max(0, idx - 1);
+    let startX = 0;
+    let startY = 0;
+    let isSwiping = false;
 
-    if (newIdx === idx) return; // nothing to do
+    // Обработчик начала касания
+    function handleTouchStart(e) {
+        if (e.touches.length !== 1) return;
 
-    const targetTab = tabs[newIdx];
-    if (targetTab) {
-        targetTab.click(); // reuse existing click handler which calls switchToTab
-        try { triggerHapticFeedback('selection'); } catch (e) { /* ignore */ }
+        const touch = e.touches[0];
+        startX = touch.clientX;
+        startY = touch.clientY;
+        isSwiping = true;
     }
+
+    // Обработчик движения
+    function handleTouchMove(e) {
+        if (!isSwiping || e.touches.length !== 1) return;
+
+        const touch = e.touches[0];
+        const deltaX = touch.clientX - startX;
+        const deltaY = touch.clientY - startY;
+
+        // Если вертикальное движение больше горизонтального - это прокрутка
+        if (Math.abs(deltaY) > VERTICAL_LOCK) {
+            isSwiping = false;
+        }
+
+        // Предотвращаем прокрутку страницы при горизонтальном свайпе
+        if (Math.abs(deltaX) > 10) {
+            e.preventDefault();
+        }
+    }
+
+    // Обработчик окончания касания
+    function handleTouchEnd(e) {
+        if (!isSwiping) return;
+
+        const touch = e.changedTouches[0];
+        const deltaX = touch.clientX - startX;
+        const deltaY = touch.clientY - startY;
+
+        // Проверяем, был ли это горизонтальный свайп
+        if (Math.abs(deltaY) > VERTICAL_LOCK) {
+            isSwiping = false;
+            return;
+        }
+
+        // Определяем направление и переключаем вкладку
+        if (Math.abs(deltaX) > SWIPE_THRESHOLD) {
+            const tabs = Array.from(document.querySelectorAll('.tab'));
+            const activeTab = document.querySelector('.tab.active');
+            const currentIndex = tabs.indexOf(activeTab);
+
+            let newIndex = currentIndex;
+
+            if (deltaX > 0) {
+                // Свайп вправо -> предыдущая вкладка
+                newIndex = Math.max(0, currentIndex - 1);
+            } else {
+                // Свайп влево -> следующая вкладка
+                newIndex = Math.min(tabs.length - 1, currentIndex + 1);
+            }
+
+            if (newIndex !== currentIndex) {
+                const targetTab = tabs[newIndex];
+                const tabId = targetTab.getAttribute('data-tab');
+                switchToTab(tabId, 'swipe');
+            }
+        }
+
+        isSwiping = false;
+    }
+
+    // Поддержка мыши для десктопа
+    let mouseDown = false;
+    let mouseStartX = 0;
+
+    container.addEventListener('mousedown', (e) => {
+        mouseDown = true;
+        mouseStartX = e.clientX;
+    });
+
+    container.addEventListener('mouseup', (e) => {
+        if (!mouseDown) return;
+
+        const deltaX = e.clientX - mouseStartX;
+
+        if (Math.abs(deltaX) > SWIPE_THRESHOLD) {
+            const tabs = Array.from(document.querySelectorAll('.tab'));
+            const activeTab = document.querySelector('.tab.active');
+            const currentIndex = tabs.indexOf(activeTab);
+
+            let newIndex = currentIndex;
+
+            if (deltaX > 0) {
+                newIndex = Math.max(0, currentIndex - 1);
+            } else {
+                newIndex = Math.min(tabs.length - 1, currentIndex + 1);
+            }
+
+            if (newIndex !== currentIndex) {
+                const targetTab = tabs[newIndex];
+                const tabId = targetTab.getAttribute('data-tab');
+                switchToTab(tabId, 'swipe');
+            }
+        }
+
+        mouseDown = false;
+    });
+
+    // Добавляем обработчики событий
+    container.addEventListener('touchstart', handleTouchStart, { passive: false });
+    container.addEventListener('touchmove', handleTouchMove, { passive: false });
+    container.addEventListener('touchend', handleTouchEnd, { passive: true });
+
+    console.log('✅ Свайп-навигация настроена');
 }
 
 /**
@@ -538,98 +681,24 @@ function markFreeCourses() {
 }
 
 /**
- * Setup swipe / pointer navigation between the main tabs (home, courses, contacts).
- * Supports pointer events (mouse/touch/pen) and falls back to touch events for older browsers.
+ * Переключение на соседнюю вкладку (для кнопок на главной)
  */
-function setupSwipeNavigation() {
-    const container = document.querySelector('.container') || document.body;
-    if (!container) return;
+function switchToAdjacentTab(direction) {
+    const tabs = Array.from(document.querySelectorAll('.tab'));
+    const activeTab = document.querySelector('.tab.active');
+    const currentIndex = tabs.indexOf(activeTab);
 
-    let startX = 0;
-    let startY = 0;
-    let isPointer = false;
-    let pointerActive = false;
-
-    const HORIZONTAL_THRESHOLD = 50; // px
-    const VERTICAL_CANCEL = 60; // px vertical movement cancels a horizontal swipe
-
-    function onSwipeDelta(dx, dy) {
-        if (Math.abs(dx) < HORIZONTAL_THRESHOLD) return;
-        if (Math.abs(dy) > VERTICAL_CANCEL) return; // likely a scroll
-
-        if (dx < 0) {
-            // swipe left -> next tab
-            switchToAdjacentTab('next');
-        } else {
-            // swipe right -> previous tab
-            switchToAdjacentTab('prev');
+    if (direction === 'next') {
+        const newIndex = Math.min(tabs.length - 1, currentIndex + 1);
+        if (newIndex !== currentIndex) {
+            const tabId = tabs[newIndex].getAttribute('data-tab');
+            switchToTab(tabId, 'click');
         }
-    }
-
-    // Pointer events (preferred)
-    function onPointerDown(e) {
-        if (typeof e.pointerType === 'string') isPointer = true;
-        pointerActive = true;
-        startX = e.clientX;
-        startY = e.clientY;
-    }
-
-    function onPointerMove(e) {
-        if (!pointerActive) return;
-        // do nothing, we evaluate on up
-    }
-
-    function onPointerUp(e) {
-        if (!pointerActive) return;
-        pointerActive = false;
-        const dx = e.clientX - startX;
-        const dy = e.clientY - startY;
-        onSwipeDelta(dx, dy);
-    }
-
-    // Touch fallback
-    function onTouchStart(e) {
-        const t = e.touches[0];
-        if (!t) return;
-        startX = t.clientX;
-        startY = t.clientY;
-    }
-
-    function onTouchEnd(e) {
-        // changedTouches may be empty on touchend; use last touch from changedTouches
-        const t = (e.changedTouches && e.changedTouches[0]) || null;
-        if (!t) return;
-        const dx = t.clientX - startX;
-        const dy = t.clientY - startY;
-        onSwipeDelta(dx, dy);
-    }
-
-    // Mouse fallback (drag)
-    let mouseDown = false;
-    function onMouseDown(e) {
-        mouseDown = true;
-        startX = e.clientX;
-        startY = e.clientY;
-    }
-    function onMouseUp(e) {
-        if (!mouseDown) return;
-        mouseDown = false;
-        const dx = e.clientX - startX;
-        const dy = e.clientY - startY;
-        onSwipeDelta(dx, dy);
-    }
-
-    // Attach preferred event listeners
-    if (window.PointerEvent) {
-        container.addEventListener('pointerdown', onPointerDown, { passive: true });
-        container.addEventListener('pointerup', onPointerUp, { passive: true });
-        container.addEventListener('pointercancel', () => { pointerActive = false; }, { passive: true });
-    } else {
-        // Touch events
-        container.addEventListener('touchstart', onTouchStart, { passive: true });
-        container.addEventListener('touchend', onTouchEnd, { passive: true });
-        // Mouse
-        container.addEventListener('mousedown', onMouseDown, { passive: true });
-        container.addEventListener('mouseup', onMouseUp, { passive: true });
+    } else if (direction === 'prev') {
+        const newIndex = Math.max(0, currentIndex - 1);
+        if (newIndex !== currentIndex) {
+            const tabId = tabs[newIndex].getAttribute('data-tab');
+            switchToTab(tabId, 'click');
+        }
     }
 }
